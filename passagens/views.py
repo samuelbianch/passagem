@@ -1,11 +1,13 @@
 from django.shortcuts import render
-from passagens.forms import PassagemForms
+from passagens.forms import PassagemForms, Pessoa, PessoaForms
 
 def index(request):
     form = PassagemForms()
+    pessoa_form = PessoaForms()
 
     contexto = {
-        'form': form
+        'form': form,
+        'pessoa_form': pessoa_form
     }
 
     return render(request, 'index.html', contexto)
@@ -13,7 +15,17 @@ def index(request):
 def revisao_consulta(request):
     if request.method == 'POST':
         form = PassagemForms(request.POST)
-        dados = {
-            'form': form
-        }
-        return render(request, 'minha_consulta.html', dados)
+        pessoa_form = PessoaForms(request.POST)
+        if form.is_valid():
+            dados = {
+                'form': form,
+                'pessoa_form': pessoa_form
+            }
+            return render(request, 'minha_consulta.html', dados)
+        else:
+            print('Formulário inválido')
+            dados = {
+                'form': form,
+                'pessoa_form': pessoa_form
+            }
+            return render(request, 'index.html', dados)
